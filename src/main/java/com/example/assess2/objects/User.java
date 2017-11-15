@@ -2,7 +2,6 @@ package com.example.assess2.objects;
 
 import java.sql.Timestamp;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -34,6 +33,9 @@ public class User {
 	
 	@ManyToMany
 	private List<Tweet> mentions;
+	
+	@ManyToMany
+	private List<Tweet> likes;
 	
 	@Embedded
 	private Profile profile;
@@ -79,6 +81,14 @@ public class User {
 	}
 	
 
+	public List<Tweet> getLikes() {
+		return likes;
+	}
+
+	public void setLikes(List<Tweet> likes) {
+		this.likes = likes;
+	}
+
 	public List<Tweet> getTweets() {
 		return tweets;
 	}
@@ -104,7 +114,7 @@ public class User {
 	}
 
 	public List<User> getFollowing() {
-		return following.stream().filter(User::getActive).collect(Collectors.toList());
+		return following;
 	}
 
 	public void setFollowing(List<User> following) {
@@ -112,7 +122,7 @@ public class User {
 	}
 
 	public List<User> getFollowers() {
-		return followers.stream().filter(User::getActive).collect(Collectors.toList());
+		return followers;
 	}
 
 	public void setFollowers(List<User> followers) {

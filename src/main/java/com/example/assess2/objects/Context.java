@@ -2,39 +2,48 @@ package com.example.assess2.objects;
 
 import java.util.List;
 
+import com.example.assess2.objectsdto.TweetDto;
+
 public class Context {
 
-	private Tweet target;
-	private List<Tweet> before;
-	private List<Tweet> after;
+	private TweetDto target;
+	private List<TweetDto> before;
+	private List<TweetDto> after;
 	
 	public Context() {
 		
 	}
 	
-	public Context(Tweet target, List<Tweet> before, List<Tweet> after) {
+	public Context(TweetDto target, List<TweetDto> before, List<TweetDto> after) {
 		super();
 		this.target = target;
 		this.before = before;
 		this.after = after;
 	}
-	
-	public Tweet getTarget() {
+
+	public TweetDto getTarget() {
 		return target;
 	}
-	public void setTarget(Tweet target) {
+
+	public void setTarget(TweetDto target) {
 		this.target = target;
 	}
-	public List<Tweet> getBefore() {
+
+	public List<TweetDto> getBefore() {
 		return before;
 	}
-	public void setBefore(List<Tweet> before) {
+
+	public void setBefore(List<TweetDto> before) {
 		this.before = before;
 	}
-	public List<Tweet> getAfter() {
+
+	public List<TweetDto> getAfter() {
 		return after;
 	}
-	public void setAfter(List<Tweet> after) {
+
+	public void setAfter(List<TweetDto> after) {
 		this.after = after;
 	}
+	
+	
 }

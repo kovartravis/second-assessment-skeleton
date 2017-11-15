@@ -17,8 +17,6 @@ public class Credentials {
 		this.username = username;
 		this.password = password;
 	}
-	
-	
 
 	@Override
 	public int hashCode() {
@@ -66,7 +64,4 @@ public class Credentials {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	
-	
-
 }

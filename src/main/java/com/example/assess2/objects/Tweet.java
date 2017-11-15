@@ -1,6 +1,7 @@
 package com.example.assess2.objects;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -8,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 @Entity
 public class Tweet {
@@ -29,11 +31,20 @@ public class Tweet {
 	@ManyToMany
 	private List<Hashtag> tags;
 	
+	@ManyToMany
+	private List<User> likedBy;
+	
 	@ManyToOne
 	private Tweet inReplyTo;
 	
+	@OneToMany
+	private List<Tweet> replies;
+	
 	@ManyToOne
 	private Tweet inRepostOf;
+	
+	@OneToMany
+	private List<Tweet> reposts;
 
 	public Tweet() {
 		
@@ -48,6 +59,21 @@ public class Tweet {
 		this.inReplyTo = inReplyTo;
 		this.inRepostOf = inRepostOf;
 		this.deleted = false;
+	}
+
+	public Tweet(Tweet tweet) {
+		this.id = null;
+		this.author = tweet.getAuthor();
+		this.posted = tweet.getPosted();
+		this.content = tweet.getContent();
+		this.inReplyTo = tweet.getInReplyTo();
+		this.inRepostOf = tweet;
+		this.deleted = false;
+		this.replies = new ArrayList<Tweet>(tweet.getReplies());
+		this.tags = new ArrayList<Hashtag>(tweet.getTags());
+		this.reposts = null;
+		this.mentions = new ArrayList<User>(tweet.getMentions());
+		this.likedBy = null;
 	}
 
 	@Override
@@ -75,7 +101,30 @@ public class Tweet {
 		return true;
 	}
 	
-	
+	public List<Tweet> getReposts() {
+		return reposts;
+	}
+
+	public void setReposts(List<Tweet> reposts) {
+		this.reposts = reposts;
+	}
+
+	public List<Tweet> getReplies() {
+		return replies;
+	}
+
+	public void setReplies(List<Tweet> replies) {
+		this.replies = replies;
+	}
+
+	public List<User> getLikedBy() {
+		return likedBy;
+	}
+
+	public void setLikedBy(List<User> likedBy) {
+		this.likedBy = likedBy;
+	}
+
 	public List<Hashtag> getTags() {
 		return tags;
 	}

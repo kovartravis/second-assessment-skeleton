@@ -19,7 +19,7 @@ import com.example.assess2.exceptions.CredentialsDoNotMatchException;
 import com.example.assess2.exceptions.NotFollowingUserException;
 import com.example.assess2.exceptions.UserAlreadyExistsException;
 import com.example.assess2.exceptions.UserDoesNotExistException;
-import com.example.assess2.objects.Credentials;
+import com.example.assess2.objectsdto.CredentialsGrabData;
 import com.example.assess2.objectsdto.TweetDto;
 import com.example.assess2.objectsdto.UserDto;
 import com.example.assess2.objectsdto.UserGrabData;
@@ -27,7 +27,7 @@ import com.example.assess2.services.TweetService;
 import com.example.assess2.services.UserService;
 
 @RestController
-@RequestMapping("Users")
+@RequestMapping("users")
 public class UserController {
 	
 	private UserService userService;
@@ -54,7 +54,7 @@ public class UserController {
 		}
 	}
 	
-	@GetMapping("/users/@{username}/feed")
+	@GetMapping("/@{username}/feed")
 	public List<TweetDto> getFeed(@PathVariable String username, HttpServletResponse response) throws IOException{
 		try {
 			return tweetService.getFeed(username);
@@ -65,7 +65,7 @@ public class UserController {
 		}
 	}
 	
-	@GetMapping("/users/@{username}/tweets")
+	@GetMapping("/@{username}/tweets")
 	public List<TweetDto> getTweets(@PathVariable String username, HttpServletResponse response) throws IOException{
 		try {
 			return tweetService.getTweets(username);
@@ -76,7 +76,7 @@ public class UserController {
 		}
 	}
 	
-	@GetMapping("/users/@{username}/mentions")
+	@GetMapping("/@{username}/mentions")
 	public List<TweetDto> getMentions(@PathVariable String username, HttpServletResponse response) throws IOException{
 		try {
 			return tweetService.getMentions(username);
@@ -87,7 +87,7 @@ public class UserController {
 		}
 	}
 	
-	@GetMapping("/users/@{username}/followers")
+	@GetMapping("/@{username}/followers")
 	public List<UserDto> getFollowers(@PathVariable String username, HttpServletResponse response) throws IOException{
 		try {
 			return userService.getFollowers(username);
@@ -98,7 +98,7 @@ public class UserController {
 		}
 	}
 	
-	@GetMapping("users/@{username}/following")
+	@GetMapping("/@{username}/following")
 	public List<UserDto> getFollowing(@PathVariable String username, HttpServletResponse response) throws IOException{
 		try {
 			return userService.getFollowing(username);
@@ -120,10 +120,10 @@ public class UserController {
 		}
 	}
 	
-	@PostMapping("/users/@{username}/follow")
-	public void followUser(@PathVariable String username, @RequestBody Credentials credentials, HttpServletResponse response) throws IOException {
+	@PostMapping("/@{username}/follow")
+	public void followUser(@PathVariable String username, @RequestBody CredentialsGrabData credentials, HttpServletResponse response) throws IOException {
 		try {
-			userService.followUser(username, credentials);
+			userService.followUser(username, credentials.credentials);
 		} catch (UserDoesNotExistException e) {
 			e.printStackTrace();
 			response.sendError(HttpServletResponse.SC_NOT_FOUND);
@@ -136,10 +136,10 @@ public class UserController {
 		}
 	}
 	
-	@PostMapping("users/@{username}/unfollow")
-	public void unfollowUser(@PathVariable String username, @RequestBody Credentials credentials, HttpServletResponse response) throws IOException {
+	@PostMapping("/@{username}/unfollow")
+	public void unfollowUser(@PathVariable String username, @RequestBody CredentialsGrabData credentials, HttpServletResponse response) throws IOException {
 		try {
-			userService.unfollowUser(username, credentials);
+			userService.unfollowUser(username, credentials.credentials);
 		} catch (UserDoesNotExistException e) {
 			e.printStackTrace();
 			response.sendError(HttpServletResponse.SC_NOT_FOUND);
@@ -168,9 +168,9 @@ public class UserController {
 	}
 	
 	@DeleteMapping("/@{username}")
-	public UserDto deleteUser (@PathVariable String username, @RequestBody Credentials credentials, HttpServletResponse response) throws IOException {
+	public UserDto deleteUser (@PathVariable String username, @RequestBody CredentialsGrabData credentials, HttpServletResponse response) throws IOException {
 	    try {
-			return userService.deleteUser(username, credentials);
+			return userService.deleteUser(username, credentials.credentials);
 		} catch (UserDoesNotExistException e) {
 			e.printStackTrace();
 			response.sendError(HttpServletResponse.SC_NOT_FOUND);

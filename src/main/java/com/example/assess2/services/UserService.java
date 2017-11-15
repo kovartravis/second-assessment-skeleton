@@ -32,6 +32,10 @@ public class UserService {
 		Credentials creds = new Credentials("travis", "a");
 		Profile pro = new Profile(null, null, "travis@yahoo.com", null);
 		userRepo.save(new User(null, System.currentTimeMillis(), pro, creds));
+		
+		Credentials creds2 = new Credentials("bob", "a");
+		Profile pro2 = new Profile(null, null, "bob@yahoo.com", null);
+		userRepo.save(new User(null, System.currentTimeMillis(), pro2, creds2));
 	}
 
 	public List<UserDto> getAll() {
@@ -64,16 +68,16 @@ public class UserService {
 	
 	public List<UserDto> getFollowing(String username) throws UserDoesNotExistException {
 		if(validationService.userExistsAndActive(username)) {
-			return userRepo.findByCredentialsUsername(username).getFollowers().stream().map(mapper::toDto).collect(Collectors.toList());
+			return userRepo.findByCredentialsUsername(username).getFollowing().stream().map(mapper::toDto).collect(Collectors.toList());
 		}else {
 			throw new UserDoesNotExistException();
 		}
 	}
 
-	public UserDto postUser(Credentials credentials, Profile profile) throws UserAlreadyExistsException {
+	public UserDto postUser(Credentials credentials, Profile profile) throws UserAlreadyExistsException{
 		if (validationService.userExists(credentials.getUsername())) {
 			User user = userRepo.findByCredentialsUsername(credentials.getUsername());
-			if (user.getCredentials().equals(credentials)) {
+			if (validationService.checkCredentials(user.getCredentials().getUsername(), credentials)) {
 				user.setActive(true);
 				if (profile.getFirstName() != null) {
 					user.getProfile().setFirstName(profile.getFirstName());
@@ -97,7 +101,7 @@ public class UserService {
 			throws UserDoesNotExistException, CredentialsDoNotMatchException {
 		if (validationService.userExistsAndActive(username)) {
 			User user = userRepo.findByCredentialsUsername(username);
-			if (user.getCredentials().equals(credentials)) {
+			if (validationService.checkCredentials(username, credentials)) {
 				user.setCredentials(credentials);
 				user.setProfile(profile);
 				return mapper.toDto(userRepo.save(user));
@@ -113,7 +117,7 @@ public class UserService {
 			throws UserDoesNotExistException, CredentialsDoNotMatchException {
 		if (validationService.userExistsAndActive(username)) {
 			User user = userRepo.findByCredentialsUsername(username);
-			if (user.getCredentials().equals(credentials)) {
+			if (validationService.checkCredentials(username, credentials)) {
 				user.setActive(false);
 				return mapper.toDto(userRepo.save(user));
 			} else {
@@ -129,13 +133,15 @@ public class UserService {
 		if (validationService.userExistsAndActive(username)
 				&& validationService.userExistsAndActive(credentials.getUsername())) {
 			User user = userRepo.findByCredentialsUsername(credentials.getUsername());
-			if (user.getCredentials().equals(credentials)) {
+			if (validationService.checkCredentials(user.getCredentials().getUsername(), credentials)) {
 				User userToFollow = userRepo.findByCredentialsUsername(username);
-				if (user.getFollowing().contains(userToFollow)) {
+				if (userToFollow.getFollowers().contains(user)) {
 					throw new AlreadyFollowingUserException();
 				} else {
 					user.getFollowing().add(userToFollow);
 					userToFollow.getFollowers().add(user);
+					userRepo.save(userToFollow);
+					userRepo.save(user);
 				}
 			} else {
 				throw new CredentialsDoNotMatchException();
@@ -150,11 +156,13 @@ public class UserService {
 		if (validationService.userExistsAndActive(username)
 				&& validationService.userExistsAndActive(credentials.getUsername())) {
 			User user = userRepo.findByCredentialsUsername(credentials.getUsername());
-			if (user.getCredentials().equals(credentials)) {
+			if (validationService.checkCredentials(user.getCredentials().getUsername(), credentials)) {
 				User userToUnfollow = userRepo.findByCredentialsUsername(username);
 				if (user.getFollowing().contains(userToUnfollow)) {
 					user.getFollowing().remove(userToUnfollow);
 					userToUnfollow.getFollowers().remove(user);
+					userRepo.save(user);
+					userRepo.save(userToUnfollow);
 				} else {
 					throw new NotFollowingUserException();
 				}
