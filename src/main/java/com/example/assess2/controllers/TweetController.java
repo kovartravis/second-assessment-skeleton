@@ -85,6 +85,17 @@ public class TweetController {
 		}
 	}
 	
+	@GetMapping("/{id}/replies")
+	public List<TweetDto> getReplies(@PathVariable Integer id, HttpServletResponse response) throws IOException{
+		try {
+			return tweetService.getReplies(id);
+		} catch (TweetDoesNotExistException e) {
+			e.printStackTrace();
+			response.sendError(HttpServletResponse.SC_NOT_FOUND);
+			return null;
+		}
+	}
+	
 	@GetMapping("/{id}/mentions")
 	public List<UserDto> getMentions(@PathVariable Integer id, HttpServletResponse response) throws IOException{
 		try {
@@ -112,9 +123,10 @@ public class TweetController {
 	}
 	
 	@PostMapping("/{id}/like")
-	public void likeTweet(@PathVariable Integer id, @RequestBody Credentials credentials, HttpServletResponse response) throws IOException {
+	public void likeTweet(@PathVariable Integer id, @RequestBody CredentialsGrabData credentials, HttpServletResponse response) throws IOException {
 		try {
-			tweetService.likeTweet(id, credentials);
+			Credentials creds = credentials.credentials;
+			tweetService.likeTweet(id, creds);
 		} catch (TweetDoesNotExistException e) {
 			e.printStackTrace();
 			response.sendError(HttpServletResponse.SC_NOT_FOUND);
@@ -150,8 +162,6 @@ public class TweetController {
 	public TweetDto repost(@PathVariable Integer id, @RequestBody CredentialsGrabData credentials, HttpServletResponse response) throws IOException {
 		try {
 			Credentials creds = credentials.credentials;
-			System.out.println(creds.getUsername());
-			System.out.println(creds.getPassword());
 			return tweetService.repost(id, creds);
 		} catch (TweetDoesNotExistException e) {
 			e.printStackTrace();

@@ -19,6 +19,8 @@ public interface TweetRepository extends JpaRepository<Tweet, Integer>{
 	public Boolean existsByIdAndDeletedIsFalse(Integer primaryKey);
 	public Tweet findByIdAndDeletedIsFalse(Integer primaryKey);
 	public List<Tweet> findByDeletedIsFalse();
+	public List<Tweet> findByInRepostOfId(Integer id);
+	public List<Tweet> findByInReplyToId(Integer id);
 	@SuppressWarnings("unchecked")
 	public Tweet save(Tweet tweet);
 }

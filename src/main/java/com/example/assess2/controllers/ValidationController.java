@@ -22,14 +22,14 @@ public class ValidationController {
 		return validationService.tagExists(label);
 	}
 	
-	@GetMapping("/validate/username/exists/@{username}")
+	@GetMapping("/username/exists/@{username}")
 	public Boolean getUsernameExists(@PathVariable String username) {
 		return validationService.userExists(username);
 	}
 	
-	@GetMapping("/validate/username/avaliable/@{username}")
+	@GetMapping("/username/available/@{username}")
 	public Boolean getUsernameAvaliable(@PathVariable String username) {
-		return !validationService.userExistsAndActive(username);
+		return !validationService.userExists(username);
 	}
 
 }

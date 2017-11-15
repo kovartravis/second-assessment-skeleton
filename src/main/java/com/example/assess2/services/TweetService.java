@@ -21,6 +21,7 @@ import com.example.assess2.objects.User;
 import com.example.assess2.objectsdto.TweetDto;
 import com.example.assess2.objectsdto.UserDto;
 import com.example.assess2.repositories.HashtagRepository;
+import com.example.assess2.repositories.TweetDtoRepository;
 import com.example.assess2.repositories.TweetRepository;
 
 @Service
@@ -32,15 +33,18 @@ public class TweetService {
 	private TweetMapper mapper;
 	private HashtagRepository hashtagRepo;
 	private UserMappers userMapper;
+	private TweetDtoRepository tweetDtoRepo;
 
 	public TweetService(TweetRepository tweetRepo, UserService userService, HashtagRepository hashtagRepo,
-			ValidationService validationService, TweetMapper mapper, UserMappers userMapper) {
+			ValidationService validationService, TweetMapper mapper, UserMappers userMapper,
+			TweetDtoRepository tweetDtoRepo) {
 		this.tweetRepo = tweetRepo;
 		this.userService = userService;
 		this.validationService = validationService;
 		this.hashtagRepo = hashtagRepo;
 		this.mapper = mapper;
 		this.userMapper = userMapper;
+		this.tweetDtoRepo = tweetDtoRepo;
 	}
 
 	public List<TweetDto> getAll() {
@@ -138,10 +142,19 @@ public class TweetService {
 				current = current.getInReplyTo();
 				before.add(current);
 			}
+			for(Tweet t : before) {
+				if(t.getDeleted()) {
+					before.remove(t);
+				}
+			}
 
 			// after
 			after = getRepliesR(target);
-			after.remove(target);
+			for(Tweet t : after) {
+				if(t.getDeleted()) {
+					after.remove(t);
+				}
+			}
 
 			List<TweetDto> sortedBeforeDto = before.stream().sorted((a, b) -> {
 				if (a.getPosted().after(b.getPosted()))
@@ -163,22 +176,43 @@ public class TweetService {
 		}
 	}
 
-	public List<Tweet> getRepliesR(Tweet tweet) {
+	public synchronized List<Tweet> getRepliesR(Tweet tweet) {
+		if (tweetRepo.findByInReplyToId(tweet.getId()) == null) {
+			return null;
+		}
 		List<Tweet> l = new ArrayList<Tweet>();
-		if (tweet.getReplies() == null) {
-			l.add(tweet);
-			return l;
+		List<Tweet> newl = new ArrayList<Tweet>();
+		l.addAll(tweetRepo.findByInReplyToId(tweet.getId()));
+		for(Tweet t : l) {
+			newl.addAll(getRepliesR(t));
 		}
-		for (Tweet t : tweet.getReplies()) {
-			l.addAll(getRepliesR(t));
-		}
+		l.addAll(newl);
 		return l;
+	}
+
+	public List<TweetDto> getReplies(Integer id) throws TweetDoesNotExistException {
+		if (!validationService.tweetExistsById(id)) {
+			throw new TweetDoesNotExistException();
+		}
+		Tweet tweet = tweetRepo.findByIdAndDeletedIsFalse(id);
+		List<Tweet> tweets = getRepliesR(tweet);
+		for(Tweet t : tweets) {
+			if(t.getDeleted()) {
+				tweets.remove(t);
+			}
+		}
+
+		return tweets.stream().sorted((a, b) -> {
+			if (a.getPosted().after(b.getPosted()))
+				return 0;
+			else
+				return 1;
+		}).map(mapper::toDto).collect(Collectors.toList());
 	}
 
 	public List<TweetDto> getReposts(Integer id) throws TweetDoesNotExistException {
 		if (validationService.tweetExistsById(id)) {
-			return tweetRepo.findByIdAndDeletedIsFalse(id).getReposts().stream().map(mapper::toDto)
-					.collect(Collectors.toList());
+			return tweetRepo.findByInRepostOfId(id).stream().map(mapper::toDto).collect(Collectors.toList());
 		} else {
 			throw new TweetDoesNotExistException();
 		}
@@ -247,10 +281,8 @@ public class TweetService {
 					extractedString = "";
 				}
 				if (mention) {
-					System.out.println(extractedString);
 					if (validationService.userExists(extractedString)) {
 						try {
-							System.out.println(extractedString);
 							mentions.add(userService.getUserByUsername(extractedString));
 						} catch (UserDoesNotExistException e) {
 							e.printStackTrace();
@@ -276,7 +308,6 @@ public class TweetService {
 				if (mention) {
 					if (validationService.userExists(extractedString)) {
 						try {
-							System.out.println(extractedString);
 							mentions.add(userService.getUserByUsername(extractedString));
 						} catch (UserDoesNotExistException e) {
 							e.printStackTrace();
@@ -302,7 +333,6 @@ public class TweetService {
 				if (mention) {
 					if (validationService.userExists(extractedString)) {
 						try {
-							System.out.println(extractedString);
 							mentions.add(userService.getUserByUsername(extractedString));
 						} catch (UserDoesNotExistException e) {
 							e.printStackTrace();
@@ -315,7 +345,6 @@ public class TweetService {
 				continue;
 			}
 			if (tag || mention) {
-				System.out.println(c);
 				extractedString = extractedString + c;
 			}
 		}
@@ -331,7 +360,6 @@ public class TweetService {
 		if (mention) {
 			if (validationService.userExists(extractedString)) {
 				try {
-					System.out.println(extractedString);
 					mentions.add(userService.getUserByUsername(extractedString));
 				} catch (UserDoesNotExistException e) {
 					e.printStackTrace();
@@ -364,11 +392,9 @@ public class TweetService {
 				throw new TweetDoesNotExistException();
 			}
 
-			User user = userService.getUserByUsername(credentials.getUsername());
-			Tweet tweet = tweetRepo.findByIdAndDeletedIsFalse(id);
-
-			user.getLikes().add(tweet);
-			tweet.getLikedBy().add(user);
+			//User user = userService.getUserByUsername(credentials.getUsername());
+			//user.getLikes().add(id);
+			//userService.save(user);
 		} else {
 			throw new UserDoesNotExistException();
 		}
@@ -406,6 +432,9 @@ public class TweetService {
 			replyingTo.getReplies().add(savedTweet);
 			tweet.setInReplyTo(replyingTo);
 
+			tweetRepo.save(savedTweet);
+			tweetRepo.save(replyingTo);
+
 			return mapper.toDto(savedTweet);
 		} else {
 			throw new UserDoesNotExistException();
@@ -428,18 +457,18 @@ public class TweetService {
 			}
 
 			Tweet tweetToRepost = tweetRepo.findByIdAndDeletedIsFalse(id);
-			Tweet newTweet = new Tweet(null, tweetToRepost.getAuthor(), tweetToRepost.getPosted().getTime(),
-					tweetToRepost.getContent(), null, tweetToRepost);
+			TweetDto dto = mapper.toDto(tweetToRepost);
+			Tweet newTweet = new Tweet(null, tweetToRepost.getAuthor(), System.currentTimeMillis(),
+					tweetToRepost.getContent(), null, dto);
 			newTweet.setTags(new ArrayList<Hashtag>());
 			newTweet.getTags().addAll(tweetToRepost.getTags());
 			newTweet.setMentions(new ArrayList<User>());
 			newTweet.getMentions().addAll(tweetToRepost.getMentions());
-			
-			User userToPostTo = userService.getUserByUsername(credentials.getUsername());
 
+			User userToPostTo = userService.getUserByUsername(credentials.getUsername());
+			tweetDtoRepo.save(dto);
 			Tweet savedTweet = tweetRepo.save(newTweet);
 			userToPostTo.getTweets().add(savedTweet);
-			tweetToRepost.getReposts().add(savedTweet);
 
 			return mapper.toDto(savedTweet);
 

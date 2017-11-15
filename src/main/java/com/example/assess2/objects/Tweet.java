@@ -4,11 +4,17 @@ import java.sql.Timestamp;
 import java.util.List;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
+
+import com.example.assess2.objectsdto.TweetDto;
 
 @Entity
 public class Tweet {
@@ -30,26 +36,21 @@ public class Tweet {
 	@ManyToMany
 	private List<Hashtag> tags;
 	
-	@ManyToMany
-	private List<User> likedBy;
-	
 	@ManyToOne
 	private Tweet inReplyTo;
 	
-	@OneToMany
+	@OneToMany(fetch = FetchType.EAGER)
 	private List<Tweet> replies;
 	
 	@ManyToOne
-	private Tweet inRepostOf;
-	
-	@OneToMany
-	private List<Tweet> reposts;
+	@Cascade({CascadeType.SAVE_UPDATE})
+	private TweetDto inRepostOf;
 
 	public Tweet() {
 		
 	}
 	
-	public Tweet(Integer id, User author, long time, String content, Tweet inReplyTo, Tweet inRepostOf) {
+	public Tweet(Integer id, User author, long time, String content, Tweet inReplyTo, TweetDto inRepostOf) {
 		super();
 		this.id = id;
 		this.author = author;
@@ -85,28 +86,12 @@ public class Tweet {
 		return true;
 	}
 	
-	public List<Tweet> getReposts() {
-		return reposts;
-	}
-
-	public void setReposts(List<Tweet> reposts) {
-		this.reposts = reposts;
-	}
-
 	public List<Tweet> getReplies() {
 		return replies;
 	}
 
 	public void setReplies(List<Tweet> replies) {
 		this.replies = replies;
-	}
-
-	public List<User> getLikedBy() {
-		return likedBy;
-	}
-
-	public void setLikedBy(List<User> likedBy) {
-		this.likedBy = likedBy;
 	}
 
 	public List<Hashtag> getTags() {
@@ -174,11 +159,12 @@ public class Tweet {
 		this.inReplyTo = inReplyTo;
 	}
 
-	public Tweet getInRepostOf() {
+	public TweetDto getInRepostOf() {
 		return inRepostOf;
 	}
 
-	public void setInRepostOf(Tweet inRepostOf) {
+	public void setInRepostOf(TweetDto inRepostOf) {
 		this.inRepostOf = inRepostOf;
 	}
+
 }

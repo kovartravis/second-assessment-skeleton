@@ -2,15 +2,26 @@ package com.example.assess2.objectsdto;
 
 import java.sql.Timestamp;
 
-import com.example.assess2.objects.Tweet;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
+@Entity
 public class TweetDto {
+	@Id
 	private Integer id;
+	@Embedded
 	private UserDto author;
+	
 	private Timestamp posted;
 	private String content;
-	private Tweet inRepostOf;
-	private Tweet inReplyTo;
+	
+	@ManyToOne
+	private TweetDto inRepostOf;
+	
+	@ManyToOne
+	private TweetDto inReplyTo;
 	
 	public TweetDto() {
 		
@@ -40,16 +51,16 @@ public class TweetDto {
 	public void setContent(String content) {
 		this.content = content;
 	}
-	public Tweet getInRepostOf() {
+	public TweetDto getInRepostOf() {
 		return inRepostOf;
 	}
-	public void setInRepostOf(Tweet inRepostOf) {
+	public void setInRepostOf(TweetDto inRepostOf) {
 		this.inRepostOf = inRepostOf;
 	}
-	public Tweet getInReplyTo() {
+	public TweetDto getInReplyTo() {
 		return inReplyTo;
 	}
-	public void setInReplyTo(Tweet inReplyTo) {
+	public void setInReplyTo(TweetDto inReplyTo) {
 		this.inReplyTo = inReplyTo;
 	}
 	

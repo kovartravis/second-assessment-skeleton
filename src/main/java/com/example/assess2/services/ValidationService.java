@@ -26,8 +26,7 @@ public class ValidationService {
 	}
 
 	public boolean userExistsAndActive(String username) {
-		if(userRepo.existsByCredentialsUsernameAndActiveIsTrue(username) != null) return true;
-		else return false;
+		return userRepo.existsByCredentialsUsernameAndActiveIsTrue(username);
 	}
 	
 	public boolean tagExists(String label) {

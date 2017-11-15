@@ -2,8 +2,11 @@ package com.example.assess2.objectsdto;
 
 import java.sql.Timestamp;
 
+import javax.persistence.Embeddable;
+
 import com.example.assess2.objects.Profile;
 
+@Embeddable
 public class UserDto {
 
 	private String username;

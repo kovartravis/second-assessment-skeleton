@@ -173,5 +173,9 @@ public class UserService {
 			throw new UserDoesNotExistException();
 		}
 	}
+	
+	public void save(User user) {
+		userRepo.save(user);
+	}
 
 }

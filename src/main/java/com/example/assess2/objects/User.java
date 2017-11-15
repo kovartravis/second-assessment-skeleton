@@ -3,6 +3,7 @@ package com.example.assess2.objects;
 import java.sql.Timestamp;
 import java.util.List;
 
+import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -34,8 +35,8 @@ public class User {
 	@ManyToMany
 	private List<Tweet> mentions;
 	
-	@ManyToMany
-	private List<Tweet> likes;
+	@ElementCollection
+	private List<Integer> likes;
 	
 	@Embedded
 	private Profile profile;
@@ -81,11 +82,11 @@ public class User {
 	}
 	
 
-	public List<Tweet> getLikes() {
+	public List<Integer> getLikes() {
 		return likes;
 	}
 
-	public void setLikes(List<Tweet> likes) {
+	public void setLikes(List<Integer> likes) {
 		this.likes = likes;
 	}
 
