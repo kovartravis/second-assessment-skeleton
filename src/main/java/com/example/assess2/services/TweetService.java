@@ -412,10 +412,9 @@ public class TweetService {
 		}
 	}
 
-	@Transactional
 	public TweetDto repost(Integer id, Credentials credentials)
 			throws TweetDoesNotExistException, CredentialsDoNotMatchException, UserDoesNotExistException {
-		if(credentials == null || credentials.getUsername() == null || credentials.getPassword() == null) {
+		if (credentials == null || credentials.getUsername() == null || credentials.getPassword() == null) {
 			throw new CredentialsDoNotMatchException();
 		}
 		if (validationService.userExistsAndActive(credentials.getUsername())) {
@@ -429,7 +428,13 @@ public class TweetService {
 			}
 
 			Tweet tweetToRepost = tweetRepo.findByIdAndDeletedIsFalse(id);
-			Tweet newTweet = new Tweet(tweetToRepost);
+			Tweet newTweet = new Tweet(null, tweetToRepost.getAuthor(), tweetToRepost.getPosted().getTime(),
+					tweetToRepost.getContent(), null, tweetToRepost);
+			newTweet.setTags(new ArrayList<Hashtag>());
+			newTweet.getTags().addAll(tweetToRepost.getTags());
+			newTweet.setMentions(new ArrayList<User>());
+			newTweet.getMentions().addAll(tweetToRepost.getMentions());
+			
 			User userToPostTo = userService.getUserByUsername(credentials.getUsername());
 
 			Tweet savedTweet = tweetRepo.save(newTweet);

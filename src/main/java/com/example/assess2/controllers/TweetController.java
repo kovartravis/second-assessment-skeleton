@@ -149,7 +149,10 @@ public class TweetController {
 	@PostMapping("/{id}/repost")
 	public TweetDto repost(@PathVariable Integer id, @RequestBody CredentialsGrabData credentials, HttpServletResponse response) throws IOException {
 		try {
-			return tweetService.repost(id, credentials.credentials);
+			Credentials creds = credentials.credentials;
+			System.out.println(creds.getUsername());
+			System.out.println(creds.getPassword());
+			return tweetService.repost(id, creds);
 		} catch (TweetDoesNotExistException e) {
 			e.printStackTrace();
 			response.sendError(HttpServletResponse.SC_NOT_FOUND);

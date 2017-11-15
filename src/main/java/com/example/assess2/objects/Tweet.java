@@ -1,7 +1,6 @@
 package com.example.assess2.objects;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -59,21 +58,6 @@ public class Tweet {
 		this.inReplyTo = inReplyTo;
 		this.inRepostOf = inRepostOf;
 		this.deleted = false;
-	}
-
-	public Tweet(Tweet tweet) {
-		this.id = null;
-		this.author = tweet.getAuthor();
-		this.posted = tweet.getPosted();
-		this.content = tweet.getContent();
-		this.inReplyTo = tweet.getInReplyTo();
-		this.inRepostOf = tweet;
-		this.deleted = false;
-		this.replies = new ArrayList<Tweet>(tweet.getReplies());
-		this.tags = new ArrayList<Hashtag>(tweet.getTags());
-		this.reposts = null;
-		this.mentions = new ArrayList<User>(tweet.getMentions());
-		this.likedBy = null;
 	}
 
 	@Override
