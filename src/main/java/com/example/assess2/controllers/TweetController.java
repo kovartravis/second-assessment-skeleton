@@ -175,8 +175,6 @@ public class TweetController {
 	@PostMapping("/{id}/repost")
 	public TweetDto repost(@PathVariable Integer id, @RequestBody Credentials credentials, HttpServletResponse response) throws IOException {
 		try {
-			System.out.println("controller");
-			//Credentials creds = credentials.credentials;
 			return tweetService.repost(id, credentials);
 		} catch (TweetDoesNotExistException e) {
 			//e.printStackTrace();

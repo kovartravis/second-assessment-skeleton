@@ -1,6 +1,7 @@
 package com.example.assess2.services;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -202,10 +203,9 @@ public class TweetService {
 				temp = t.getInReplyTo();
 				t.setInReplyTo(null);
 				t = temp;
-				
 			}
 		}
-		return flatList;
+		return new ArrayList<Tweet>(new HashSet<Tweet>(flatList));
 	}
 
 	public List<TweetDto> getReplies(Integer id) throws TweetDoesNotExistException {
@@ -493,8 +493,6 @@ public class TweetService {
 			if (!validationService.tweetExistsById(id)) {
 				throw new TweetDoesNotExistException();
 			}
-
-			System.out.println("repost!!!");
 
 			Tweet tweetToRepost = tweetRepo.findByIdAndDeletedIsFalse(id);
 			TweetDto dto = mapper.toDto(tweetToRepost);
