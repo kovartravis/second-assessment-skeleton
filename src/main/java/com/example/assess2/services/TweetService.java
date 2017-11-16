@@ -195,14 +195,11 @@ public class TweetService {
 
 	public List<Tweet> flattenList(List<Tweet> tweets){
 		List<Tweet> flatList = new ArrayList<Tweet>();
-		Tweet temp;
 		for(Tweet t : tweets) {
 			flatList.add(t);
 			while(t.getInReplyTo() != null) {
 				flatList.add(t.getInReplyTo());
-				temp = t.getInReplyTo();
-				t.setInReplyTo(null);
-				t = temp;
+				t = t.getInReplyTo();
 			}
 		}
 		return new ArrayList<Tweet>(new HashSet<Tweet>(flatList));
