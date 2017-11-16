@@ -35,7 +35,7 @@ public class HashtagController {
 		try {
 			return hashtagService.getAllByLabel(label);
 		} catch (TagDoesNotExistException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 			response.sendError(HttpServletResponse.SC_NOT_FOUND);
 			return null;
 		}

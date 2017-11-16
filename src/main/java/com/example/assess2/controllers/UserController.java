@@ -17,8 +17,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.assess2.exceptions.AlreadyFollowingUserException;
 import com.example.assess2.exceptions.CredentialsDoNotMatchException;
 import com.example.assess2.exceptions.NotFollowingUserException;
+import com.example.assess2.exceptions.SomethingIsNullAndItShouldntBeException;
 import com.example.assess2.exceptions.UserAlreadyExistsException;
 import com.example.assess2.exceptions.UserDoesNotExistException;
+import com.example.assess2.objects.Credentials;
 import com.example.assess2.objectsdto.CredentialsGrabData;
 import com.example.assess2.objectsdto.TweetDto;
 import com.example.assess2.objectsdto.UserDto;
@@ -48,7 +50,7 @@ public class UserController {
 		try {
 			return userService.getUserDtoByUsername(username);
 		} catch (UserDoesNotExistException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 			response.sendError(HttpServletResponse.SC_NOT_FOUND);
 			return null;
 		}
@@ -59,7 +61,7 @@ public class UserController {
 		try {
 			return tweetService.getFeed(username);
 		} catch (UserDoesNotExistException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 			response.sendError(HttpServletResponse.SC_NOT_FOUND);
 			return null;
 		}
@@ -70,7 +72,7 @@ public class UserController {
 		try {
 			return tweetService.getTweets(username);
 		} catch (UserDoesNotExistException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 			response.sendError(HttpServletResponse.SC_NOT_FOUND);
 			return null;
 		}
@@ -81,7 +83,7 @@ public class UserController {
 		try {
 			return tweetService.getMentions(username);
 		} catch (UserDoesNotExistException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 			response.sendError(HttpServletResponse.SC_NOT_FOUND);
 			return null;
 		}
@@ -92,7 +94,7 @@ public class UserController {
 		try {
 			return userService.getFollowers(username);
 		} catch (UserDoesNotExistException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 			response.sendError(HttpServletResponse.SC_NOT_FOUND);
 			return null;
 		}
@@ -103,7 +105,7 @@ public class UserController {
 		try {
 			return userService.getFollowing(username);
 		} catch (UserDoesNotExistException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 			response.sendError(HttpServletResponse.SC_NOT_FOUND);
 			return null;
 		}
@@ -114,25 +116,32 @@ public class UserController {
 		try {
 			return userService.postUser(user.credentials, user.profile);
 		} catch (UserAlreadyExistsException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 			response.sendError(HttpServletResponse.SC_FORBIDDEN);
+			return null;
+		} catch (SomethingIsNullAndItShouldntBeException e) {
+			//e.printStackTrace();
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
 			return null;
 		}
 	}
 	
 	@PostMapping("/@{username}/follow")
-	public void followUser(@PathVariable String username, @RequestBody CredentialsGrabData credentials, HttpServletResponse response) throws IOException {
+	public void followUser(@PathVariable String username, @RequestBody Credentials credentials, HttpServletResponse response) throws IOException {
 		try {
-			userService.followUser(username, credentials.credentials);
+			userService.followUser(username, credentials);
 		} catch (UserDoesNotExistException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 			response.sendError(HttpServletResponse.SC_NOT_FOUND);
 		} catch (CredentialsDoNotMatchException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 			response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
 		} catch (AlreadyFollowingUserException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 			response.sendError(HttpServletResponse.SC_FORBIDDEN);
+		} catch (SomethingIsNullAndItShouldntBeException e) {
+			//e.printStackTrace();
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
 		}
 	}
 	
@@ -141,14 +150,17 @@ public class UserController {
 		try {
 			userService.unfollowUser(username, credentials.credentials);
 		} catch (UserDoesNotExistException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 			response.sendError(HttpServletResponse.SC_NOT_FOUND);
 		} catch (CredentialsDoNotMatchException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 			response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
 		} catch (NotFollowingUserException e) {
-			e.printStackTrace();
-			response.sendError(HttpServletResponse.SC_FORBIDDEN);
+			//e.printStackTrace();
+			response.sendError(HttpServletResponse.SC_FORBIDDEN); 
+		} catch (SomethingIsNullAndItShouldntBeException e) {
+			//e.printStackTrace();
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
 		}
 	}
 	
@@ -157,12 +169,16 @@ public class UserController {
 		try {
 			return userService.updateUser(username, user.credentials, user.profile);
 		} catch (UserDoesNotExistException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 			response.sendError(HttpServletResponse.SC_NOT_FOUND);
 			return null;
 		} catch (CredentialsDoNotMatchException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 			response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+			return null;
+		} catch (SomethingIsNullAndItShouldntBeException e) {
+			//e.printStackTrace();
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
 			return null;
 		}
 	}
@@ -172,11 +188,11 @@ public class UserController {
 	    try {
 			return userService.deleteUser(username, credentials.credentials);
 		} catch (UserDoesNotExistException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 			response.sendError(HttpServletResponse.SC_NOT_FOUND);
 			return null;
 		} catch (CredentialsDoNotMatchException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 			response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
 			return null;
 		}

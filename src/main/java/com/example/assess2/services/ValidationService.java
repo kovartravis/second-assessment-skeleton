@@ -29,6 +29,13 @@ public class ValidationService {
 		return userRepo.existsByCredentialsUsernameAndActiveIsTrue(username);
 	}
 	
+	public boolean userExistsIgnoreCase(String username) {
+		return userRepo.existsByCredentialsUsernameIgnoreCase(username);
+	}
+	
+	public boolean userExistsAndActiveIgnoreCase(String username) {
+		return userRepo.existsByCredentialsUsernameIgnoreCaseAndActiveIsTrue(username);
+	}
 	public boolean tagExists(String label) {
 		return hashtagRepo.existsByLabel(label);
 	}

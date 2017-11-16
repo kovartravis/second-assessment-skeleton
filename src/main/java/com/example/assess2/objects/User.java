@@ -3,7 +3,6 @@ package com.example.assess2.objects;
 import java.sql.Timestamp;
 import java.util.List;
 
-import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -11,6 +10,11 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 @Entity
 @Table(name = "UserTable")
@@ -24,19 +28,20 @@ public class User {
 	private Boolean active;
 	
 	@ManyToMany
+	@LazyCollection(LazyCollectionOption.FALSE)
+	@Cascade({CascadeType.SAVE_UPDATE})
 	private List<User> following;
 	
 	@ManyToMany
-	private List<User> followers;
+	@LazyCollection(LazyCollectionOption.FALSE)
+	@Cascade({CascadeType.SAVE_UPDATE})
+	private List<Tweet> likes;
 	
 	@OneToMany
 	private List<Tweet> tweets;
 	
 	@ManyToMany
 	private List<Tweet> mentions;
-	
-	@ElementCollection
-	private List<Integer> likes;
 	
 	@Embedded
 	private Profile profile;
@@ -80,13 +85,13 @@ public class User {
 			return false;
 		return true;
 	}
-	
 
-	public List<Integer> getLikes() {
+	
+	public List<Tweet> getLikes() {
 		return likes;
 	}
 
-	public void setLikes(List<Integer> likes) {
+	public void setLikes(List<Tweet> likes) {
 		this.likes = likes;
 	}
 
@@ -120,14 +125,6 @@ public class User {
 
 	public void setFollowing(List<User> following) {
 		this.following = following;
-	}
-
-	public List<User> getFollowers() {
-		return followers;
-	}
-
-	public void setFollowers(List<User> followers) {
-		this.followers = followers;
 	}
 
 	public Boolean getActive() {

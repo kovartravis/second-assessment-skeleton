@@ -13,6 +13,7 @@ import com.example.assess2.objects.User;
 public interface TweetRepository extends JpaRepository<Tweet, Integer>{
 
 	public List<Tweet> findByAuthorAndDeletedIsFalse(User user);
+	public List<Tweet> findByAuthor(User user);
 	public List<Tweet> findByMentionsAndDeletedIsFalse(User user);
 	public List<Tweet> findByTagsAndDeletedIsFalse(Hashtag tag);
 	public Boolean existsById(Integer primaryKey);

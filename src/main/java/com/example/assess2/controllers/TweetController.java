@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.assess2.exceptions.ContentNullException;
 import com.example.assess2.exceptions.CredentialsDoNotMatchException;
 import com.example.assess2.exceptions.TagDoesNotExistException;
 import com.example.assess2.exceptions.TweetDoesNotExistException;
@@ -20,7 +21,6 @@ import com.example.assess2.exceptions.UserDoesNotExistException;
 import com.example.assess2.objects.Context;
 import com.example.assess2.objects.Credentials;
 import com.example.assess2.objects.Hashtag;
-import com.example.assess2.objectsdto.CredentialsGrabData;
 import com.example.assess2.objectsdto.TweetDto;
 import com.example.assess2.objectsdto.TweetGrabData;
 import com.example.assess2.objectsdto.UserDto;
@@ -46,7 +46,7 @@ public class TweetController {
 		try {
 			return tweetService.getTweetById(id);
 		} catch (TagDoesNotExistException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 			response.sendError(HttpServletResponse.SC_NOT_FOUND);
 			return null;
 		}
@@ -57,7 +57,7 @@ public class TweetController {
 		try {
 			return tweetService.getTweetTags(id);
 		} catch (TweetDoesNotExistException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 			response.sendError(HttpServletResponse.SC_NOT_FOUND);
 			return null;
 		}
@@ -68,7 +68,7 @@ public class TweetController {
 		try {
 			return tweetService.getTweetContext(id);
 		} catch (TweetDoesNotExistException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 			response.sendError(HttpServletResponse.SC_NOT_FOUND);
 			return null;
 		}
@@ -79,7 +79,7 @@ public class TweetController {
 		try {
 			return tweetService.getReposts(id);
 		} catch (TweetDoesNotExistException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 			response.sendError(HttpServletResponse.SC_NOT_FOUND);
 			return null;
 		}
@@ -90,7 +90,7 @@ public class TweetController {
 		try {
 			return tweetService.getReplies(id);
 		} catch (TweetDoesNotExistException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 			response.sendError(HttpServletResponse.SC_NOT_FOUND);
 			return null;
 		}
@@ -101,7 +101,18 @@ public class TweetController {
 		try {
 			return tweetService.getMentions(id);
 		} catch (TweetDoesNotExistException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			response.sendError(HttpServletResponse.SC_NOT_FOUND);
+			return null;
+		}
+	}
+	
+	@GetMapping("{id}/likes")
+	public List<UserDto> getLikes(@PathVariable Integer id, HttpServletResponse response) throws IOException{
+		try {
+			return tweetService.getLikes(id);
+		} catch (TweetDoesNotExistException e) {
+			//e.printStackTrace();
 			response.sendError(HttpServletResponse.SC_NOT_FOUND);
 			return null;
 		}
@@ -112,29 +123,32 @@ public class TweetController {
 		try {
 			return tweetService.postTweet(tweetGrabData.content, tweetGrabData.credentials);
 		} catch (UserDoesNotExistException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 			response.sendError(HttpServletResponse.SC_NOT_FOUND);
 			return null;
 		} catch (CredentialsDoNotMatchException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+			return null;
+		} catch (ContentNullException e) {
+			//e.printStackTrace();
 			response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
 			return null;
 		}
 	}
 	
 	@PostMapping("/{id}/like")
-	public void likeTweet(@PathVariable Integer id, @RequestBody CredentialsGrabData credentials, HttpServletResponse response) throws IOException {
+	public void likeTweet(@PathVariable Integer id, @RequestBody Credentials credentials, HttpServletResponse response) throws IOException {
 		try {
-			Credentials creds = credentials.credentials;
-			tweetService.likeTweet(id, creds);
+			tweetService.likeTweet(id, credentials);
 		} catch (TweetDoesNotExistException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 			response.sendError(HttpServletResponse.SC_NOT_FOUND);
 		} catch (CredentialsDoNotMatchException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 			response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
 		} catch (UserDoesNotExistException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 			response.sendError(HttpServletResponse.SC_NOT_FOUND);
 		}
 	}
@@ -144,35 +158,36 @@ public class TweetController {
 		try {
 			return tweetService.replyTo(id, tweetGrabData.credentials, tweetGrabData.content);
 		} catch (TweetDoesNotExistException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 			response.sendError(HttpServletResponse.SC_NOT_FOUND);
 			return null;
 		} catch (CredentialsDoNotMatchException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 			response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
 			return null;
 		} catch (UserDoesNotExistException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 			response.sendError(HttpServletResponse.SC_NOT_FOUND);
 			return null;
 		}
 	}
 	
 	@PostMapping("/{id}/repost")
-	public TweetDto repost(@PathVariable Integer id, @RequestBody CredentialsGrabData credentials, HttpServletResponse response) throws IOException {
+	public TweetDto repost(@PathVariable Integer id, @RequestBody Credentials credentials, HttpServletResponse response) throws IOException {
 		try {
-			Credentials creds = credentials.credentials;
-			return tweetService.repost(id, creds);
+			System.out.println("controller");
+			//Credentials creds = credentials.credentials;
+			return tweetService.repost(id, credentials);
 		} catch (TweetDoesNotExistException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 			response.sendError(HttpServletResponse.SC_NOT_FOUND);
 			return null;
 		} catch (CredentialsDoNotMatchException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 			response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
 			return null;
 		} catch (UserDoesNotExistException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 			response.sendError(HttpServletResponse.SC_NOT_FOUND);
 			return null;
 		}
@@ -183,7 +198,7 @@ public class TweetController {
 		try {
 			return tweetService.deleteTweet(id);
 		} catch (TweetDoesNotExistException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 			response.sendError(HttpServletResponse.SC_NOT_FOUND);
 			return null;
 		}

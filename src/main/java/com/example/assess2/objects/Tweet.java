@@ -4,7 +4,6 @@ import java.sql.Timestamp;
 import java.util.List;
 
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
@@ -13,6 +12,8 @@ import javax.persistence.OneToMany;
 
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import com.example.assess2.objectsdto.TweetDto;
 
@@ -39,7 +40,9 @@ public class Tweet {
 	@ManyToOne
 	private Tweet inReplyTo;
 	
-	@OneToMany(fetch = FetchType.EAGER)
+	@OneToMany
+	@LazyCollection(LazyCollectionOption.FALSE)
+	@Cascade({CascadeType.SAVE_UPDATE})
 	private List<Tweet> replies;
 	
 	@ManyToOne
@@ -86,6 +89,8 @@ public class Tweet {
 		return true;
 	}
 	
+	
+
 	public List<Tweet> getReplies() {
 		return replies;
 	}

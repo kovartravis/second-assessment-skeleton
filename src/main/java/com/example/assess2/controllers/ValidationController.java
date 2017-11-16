@@ -24,12 +24,12 @@ public class ValidationController {
 	
 	@GetMapping("/username/exists/@{username}")
 	public Boolean getUsernameExists(@PathVariable String username) {
-		return validationService.userExists(username);
+		return validationService.userExistsAndActiveIgnoreCase(username);
 	}
 	
 	@GetMapping("/username/available/@{username}")
 	public Boolean getUsernameAvaliable(@PathVariable String username) {
-		return !validationService.userExists(username);
+		return !validationService.userExistsIgnoreCase(username);
 	}
 
 }
