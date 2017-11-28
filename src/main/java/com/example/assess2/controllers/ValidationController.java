@@ -3,9 +3,11 @@ package com.example.assess2.controllers;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.assess2.objects.Credentials;
 import com.example.assess2.services.ValidationService;
 
 @CrossOrigin
@@ -32,6 +34,11 @@ public class ValidationController {
 	@GetMapping("/username/available/@{username}")
 	public Boolean getUsernameAvaliable(@PathVariable String username) {
 		return !validationService.userExistsIgnoreCase(username);
+	}
+	
+	@GetMapping("/username/credentials")
+	public Boolean getCredentialsCorrect(@RequestBody Credentials creds) {
+			return validationService.checkCredentials(creds.getUsername(), creds);
 	}
 
 }
