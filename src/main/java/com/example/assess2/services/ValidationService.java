@@ -45,6 +45,9 @@ public class ValidationService {
 	}
 	
 	public boolean checkCredentials(String username, Credentials creds) {
+		if(userRepo.findByCredentialsUsername(username) != null) {
+			return false;
+		}
 		User user = userRepo.findByCredentialsUsername(username);
 		if(user.getCredentials().getPassword().equals(creds.getPassword())) return true;
 		else return false;
