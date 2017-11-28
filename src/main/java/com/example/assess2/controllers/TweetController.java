@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,6 +27,7 @@ import com.example.assess2.objectsdto.TweetGrabData;
 import com.example.assess2.objectsdto.UserDto;
 import com.example.assess2.services.TweetService;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/tweets")
 public class TweetController {
