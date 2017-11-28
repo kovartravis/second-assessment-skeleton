@@ -36,7 +36,7 @@ public class ValidationController {
 		return !validationService.userExistsIgnoreCase(username);
 	}
 	
-	@GetMapping("/username/credentials")
+	@PostMapping("/username/credentials")
 	public Boolean getCredentialsCorrect(@RequestBody Credentials creds) {
 			return validationService.checkCredentials(creds.getUsername(), creds);
 	}
