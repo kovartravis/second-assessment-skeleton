@@ -1,5 +1,6 @@
 package com.example.assess2.controllers;
 
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -7,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.assess2.services.ValidationService;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/validate")
 public class ValidationController {

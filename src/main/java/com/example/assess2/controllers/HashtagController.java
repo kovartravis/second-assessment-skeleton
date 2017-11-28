@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +16,7 @@ import com.example.assess2.objects.Hashtag;
 import com.example.assess2.objectsdto.TweetDto;
 import com.example.assess2.services.HashtagService;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/tags")
 public class HashtagController {

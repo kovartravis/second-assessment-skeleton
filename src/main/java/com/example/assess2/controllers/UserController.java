@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -28,6 +29,7 @@ import com.example.assess2.objectsdto.UserGrabData;
 import com.example.assess2.services.TweetService;
 import com.example.assess2.services.UserService;
 
+@CrossOrigin	
 @RestController
 @RequestMapping("users")
 public class UserController {
