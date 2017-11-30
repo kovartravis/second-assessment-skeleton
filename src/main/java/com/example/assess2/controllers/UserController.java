@@ -147,9 +147,9 @@ public class UserController {
 	}
 	
 	@PostMapping("/@{username}/unfollow")
-	public void unfollowUser(@PathVariable String username, @RequestBody CredentialsGrabData credentials, HttpServletResponse response) throws IOException {
+	public void unfollowUser(@PathVariable String username, @RequestBody Credentials credentials, HttpServletResponse response) throws IOException {
 		try {
-			userService.unfollowUser(username, credentials.credentials);
+			userService.unfollowUser(username, credentials);
 		} catch (UserDoesNotExistException e) {
 			//e.printStackTrace();
 			response.sendError(HttpServletResponse.SC_NOT_FOUND);
