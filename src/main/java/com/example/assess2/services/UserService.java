@@ -58,6 +58,7 @@ public class UserService {
 			return mapper.toDto(userRepo.findByCredentialsUsername(username));
 		}
 	}
+		
 
 	public List<UserDto> getFollowers(String username) throws UserDoesNotExistException {
 		if (validationService.userExistsAndActive(username)) {

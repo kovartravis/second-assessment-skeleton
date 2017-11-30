@@ -186,9 +186,9 @@ public class UserController {
 	}
 	
 	@DeleteMapping("/@{username}")
-	public UserDto deleteUser (@PathVariable String username, @RequestBody CredentialsGrabData credentials, HttpServletResponse response) throws IOException {
+	public UserDto deleteUser (@PathVariable String username, @RequestBody Credentials credentials, HttpServletResponse response) throws IOException {
 	    try {
-			return userService.deleteUser(username, credentials.credentials);
+			return userService.deleteUser(username, credentials);
 		} catch (UserDoesNotExistException e) {
 			//e.printStackTrace();
 			response.sendError(HttpServletResponse.SC_NOT_FOUND);
