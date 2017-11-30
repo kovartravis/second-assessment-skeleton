@@ -6,7 +6,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -185,7 +184,7 @@ public class UserController {
 		}
 	}
 	
-	@DeleteMapping("/@{username}")
+	@PostMapping("/@{username}")
 	public UserDto deleteUser (@PathVariable String username, @RequestBody Credentials credentials, HttpServletResponse response) throws IOException {
 	    try {
 			return userService.deleteUser(username, credentials);
