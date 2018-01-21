@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.assess2.exceptions.ContentNullException;
 import com.example.assess2.exceptions.CredentialsDoNotMatchException;
 import com.example.assess2.exceptions.TagDoesNotExistException;
+import com.example.assess2.exceptions.TweetAlreadyLikedException;
 import com.example.assess2.exceptions.TweetDoesNotExistException;
 import com.example.assess2.exceptions.UserDoesNotExistException;
 import com.example.assess2.objects.Context;
@@ -152,6 +153,9 @@ public class TweetController {
 		} catch (UserDoesNotExistException e) {
 			//e.printStackTrace();
 			response.sendError(HttpServletResponse.SC_NOT_FOUND);
+		} catch (TweetAlreadyLikedException e) {
+                        //e.printStackTrace();
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
 		}
 	}
 	

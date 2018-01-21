@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.assess2.exceptions.ContentNullException;
 import com.example.assess2.exceptions.CredentialsDoNotMatchException;
 import com.example.assess2.exceptions.TagDoesNotExistException;
+import com.example.assess2.exceptions.TweetAlreadyLikedException;
 import com.example.assess2.exceptions.TweetDoesNotExistException;
 import com.example.assess2.exceptions.UserDoesNotExistException;
 import com.example.assess2.mappers.TweetMapper;
@@ -410,7 +411,7 @@ public class TweetService {
 
 	@Transactional
 	public void likeTweet(Integer id, Credentials credentials)
-			throws TweetDoesNotExistException, CredentialsDoNotMatchException, UserDoesNotExistException {
+			throws TweetDoesNotExistException, CredentialsDoNotMatchException, UserDoesNotExistException, TweetAlreadyLikedException {
 		if (credentials == null) {
 			throw new CredentialsDoNotMatchException();
 		}
@@ -425,7 +426,7 @@ public class TweetService {
 			}
 			User user = userService.getUserByUsername(credentials.getUsername());
 			if (user.getLikes().contains(tweetRepo.findByIdAndDeletedIsFalse(id))) {
-				throw new CredentialsDoNotMatchException();
+				throw new TweetAlreadyLikedException();
 			}
 			user.getLikes().add(tweetRepo.findByIdAndDeletedIsFalse(id));
 			userService.save(user);
