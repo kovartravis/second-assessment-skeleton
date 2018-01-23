@@ -259,4 +259,21 @@ public class UserService {
 		userRepo.save(user);
 	}
 
+	public UserDto loginUser(Credentials credentials) throws UserDoesNotExistException, SomethingIsNullAndItShouldntBeException {
+		if(credentials == null) {
+			throw new SomethingIsNullAndItShouldntBeException();
+		}
+		if(credentials.getUsername() == null || credentials.getPassword() == null) {
+			throw new SomethingIsNullAndItShouldntBeException();
+		}
+		if(!validationService.userExistsAndActiveIgnoreCase(credentials.getUsername())) {
+			throw new UserDoesNotExistException();
+		}
+		if(validationService.checkCredentials(credentials.getUsername(), credentials)) {
+			return mapper.toDto(userRepo.findByCredentialsUsername(credentials.getUsername()));
+		}else {
+			throw new UserDoesNotExistException();
+		}
+	}
+
 }

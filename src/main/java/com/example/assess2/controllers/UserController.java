@@ -21,7 +21,6 @@ import com.example.assess2.exceptions.SomethingIsNullAndItShouldntBeException;
 import com.example.assess2.exceptions.UserAlreadyExistsException;
 import com.example.assess2.exceptions.UserDoesNotExistException;
 import com.example.assess2.objects.Credentials;
-import com.example.assess2.objectsdto.CredentialsGrabData;
 import com.example.assess2.objectsdto.TweetDto;
 import com.example.assess2.objectsdto.UserDto;
 import com.example.assess2.objectsdto.UserGrabData;
@@ -110,6 +109,20 @@ public class UserController {
 			response.sendError(HttpServletResponse.SC_NOT_FOUND);
 			return null;
 		}
+	}
+	
+	@PostMapping("/login")
+	public UserDto loginUser(@RequestBody Credentials credentials, HttpServletResponse response) throws IOException {
+		try {
+			return userService.loginUser(credentials);
+		} catch (UserDoesNotExistException e) {
+			//e.printStackTrace();
+			response.sendError(HttpServletResponse.SC_NOT_FOUND);
+		} catch (SomethingIsNullAndItShouldntBeException e) {
+			//e.printStackTrace();
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+		}
+		return null;
 	}
 	
 	@PostMapping
