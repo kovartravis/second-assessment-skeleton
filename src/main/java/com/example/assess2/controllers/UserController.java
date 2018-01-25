@@ -89,6 +89,21 @@ public class UserController {
 		}
 	}
 	
+	@GetMapping("/@{username}/likes")
+	public List<TweetDto> getLikes(@PathVariable String username, HttpServletResponse response) throws IOException{
+		try {
+			return userService.getUsersLikes(username);
+		} catch (SomethingIsNullAndItShouldntBeException e) {
+			//e.printStackTrace();
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+			return null;
+		} catch (UserDoesNotExistException e) {
+			//e.printStackTrace();
+			response.sendError(HttpServletResponse.SC_NOT_FOUND);
+			return null;
+		}
+	}
+	
 	@GetMapping("/@{username}/followers")
 	public List<UserDto> getFollowers(@PathVariable String username, HttpServletResponse response) throws IOException{
 		try {

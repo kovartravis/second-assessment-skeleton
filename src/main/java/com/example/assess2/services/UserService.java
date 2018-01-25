@@ -14,11 +14,13 @@ import com.example.assess2.exceptions.SomethingIsNullAndItShouldntBeException;
 import com.example.assess2.exceptions.TweetDoesNotExistException;
 import com.example.assess2.exceptions.UserAlreadyExistsException;
 import com.example.assess2.exceptions.UserDoesNotExistException;
+import com.example.assess2.mappers.TweetMapper;
 import com.example.assess2.mappers.UserMappers;
 import com.example.assess2.objects.Credentials;
 import com.example.assess2.objects.Profile;
 import com.example.assess2.objects.Tweet;
 import com.example.assess2.objects.User;
+import com.example.assess2.objectsdto.TweetDto;
 import com.example.assess2.objectsdto.UserDto;
 import com.example.assess2.repositories.TweetRepository;
 import com.example.assess2.repositories.UserRepository;
@@ -29,14 +31,16 @@ public class UserService {
 	private UserRepository userRepo;
 	private ValidationService validationService;
 	private UserMappers mapper;
+	private TweetMapper tweetMapper;
 	private TweetRepository tweetRepo;
 
 	public UserService(UserRepository userRepo, ValidationService validationService, UserMappers mapper,
-			TweetRepository tweetRepo) {
+			TweetRepository tweetRepo, TweetMapper tweetMapper) {
 		this.userRepo = userRepo;
 		this.validationService = validationService;
 		this.mapper = mapper;
 		this.tweetRepo = tweetRepo;
+		this.tweetMapper = tweetMapper;
 	}
 
 	public List<UserDto> getAll() {
@@ -80,7 +84,6 @@ public class UserService {
 
 	public List<UserDto> getLikes(Integer id) throws TweetDoesNotExistException {
 		if (validationService.tweetExistsById(id)) {
-			
 			return userRepo.findDistinctByLikesAndActiveIsTrue(tweetRepo.findByIdAndDeletedIsFalse(id)).stream().map(mapper::toDto).collect(Collectors.toList());
 		} else {
 			throw new TweetDoesNotExistException();
@@ -274,6 +277,16 @@ public class UserService {
 		}else {
 			throw new UserDoesNotExistException();
 		}
+	}
+
+	public List<TweetDto> getUsersLikes(String username) throws SomethingIsNullAndItShouldntBeException, UserDoesNotExistException {
+		if(username == null) {
+			throw new SomethingIsNullAndItShouldntBeException();
+		}
+		if(!this.validationService.userExists(username)) {
+			throw new UserDoesNotExistException();
+		}
+		return userRepo.findByCredentialsUsername(username).getLikes().stream().map(tweetMapper::toDto).collect(Collectors.toList());
 	}
 
 }
