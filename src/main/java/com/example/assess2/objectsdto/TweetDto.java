@@ -1,11 +1,15 @@
 package com.example.assess2.objectsdto;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+
+import com.example.assess2.objects.Hashtag;
 
 @Entity
 public class TweetDto {
@@ -22,6 +26,9 @@ public class TweetDto {
 	
 	@ManyToOne
 	private TweetDto inReplyTo;
+	
+	@ManyToMany
+	private List<Hashtag> tags;
 	
 	public TweetDto() {
 		
@@ -64,5 +71,11 @@ public class TweetDto {
 		this.inReplyTo = inReplyTo;
 	}
 	
-	
+	public List<Hashtag> getTags() {
+		return tags;
+	}
+
+	public void setTags(List<Hashtag> tags) {
+		this.tags = tags;
+	}
 }
