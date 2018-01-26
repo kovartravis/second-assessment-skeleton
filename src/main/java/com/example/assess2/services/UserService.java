@@ -4,6 +4,9 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +19,7 @@ import com.example.assess2.exceptions.UserAlreadyExistsException;
 import com.example.assess2.exceptions.UserDoesNotExistException;
 import com.example.assess2.mappers.TweetMapper;
 import com.example.assess2.mappers.UserMappers;
+import com.example.assess2.objects.AuthUser;
 import com.example.assess2.objects.Credentials;
 import com.example.assess2.objects.Profile;
 import com.example.assess2.objects.Tweet;
@@ -26,7 +30,7 @@ import com.example.assess2.repositories.TweetRepository;
 import com.example.assess2.repositories.UserRepository;
 
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
 
 	private UserRepository userRepo;
 	private ValidationService validationService;
@@ -289,4 +293,19 @@ public class UserService {
 		return userRepo.findByCredentialsUsername(username).getLikes().stream().map(tweetMapper::toDto).collect(Collectors.toList());
 	}
 
+	@Override
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+		User user = null;
+		try {
+			user = this.getUserByUsername(username);
+		} catch (UserDoesNotExistException e) {
+			try {
+				throw new UserDoesNotExistException();
+			} catch (UserDoesNotExistException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}
+		return new AuthUser(user.getCredentials().getUsername(), user.getCredentials().getPassword(), null);
+	}
 }
