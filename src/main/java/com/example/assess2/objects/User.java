@@ -26,6 +26,7 @@ public class User {
 	
 	private Timestamp joined;
 	private Boolean active;
+	private String authority;
 	
 	@ManyToMany
 	@LazyCollection(LazyCollectionOption.FALSE)
@@ -157,6 +158,14 @@ public class User {
 
 	public void setCredentials(Credentials credentials) {
 		this.credentials = credentials;
+	}
+
+	public String getAuthority() {
+		return authority;
+	}
+
+	public void setAuthority(String authority) {
+		this.authority = authority;
 	}
 	
 	

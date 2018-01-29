@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -156,6 +157,7 @@ public class UserController {
 	}
 	
 	@PostMapping("/@{username}/follow")
+	@PreAuthorize("hasAuthority('ADMIN_USER') or hasAuthority('STANDARD_USER')")
 	public void followUser(@PathVariable String username, @RequestBody Credentials credentials, HttpServletResponse response) throws IOException {
 		try {
 			userService.followUser(username, credentials);

@@ -1,6 +1,7 @@
 package com.example.assess2.services;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,6 +29,7 @@ import com.example.assess2.objectsdto.TweetDto;
 import com.example.assess2.objectsdto.UserDto;
 import com.example.assess2.repositories.TweetRepository;
 import com.example.assess2.repositories.UserRepository;
+import com.example.assess2.objects.Authority;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -299,13 +301,10 @@ public class UserService implements UserDetailsService {
 		try {
 			user = this.getUserByUsername(username);
 		} catch (UserDoesNotExistException e) {
-			try {
-				throw new UserDoesNotExistException();
-			} catch (UserDoesNotExistException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
+			e.printStackTrace();
 		}
-		return new AuthUser(user.getCredentials().getUsername(), user.getCredentials().getPassword(), null);
+		ArrayList<Authority> ar = new ArrayList<Authority>();
+		ar.add(new Authority("STANDARD_USER"));
+		return new AuthUser(user.getCredentials().getUsername(), user.getCredentials().getPassword(), ar);
 	}
 }
